@@ -3,191 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ULTIMATE SELECTIVE AI NIGHT VISION</title>
+    <title>ULTIMATE MIL-SPEC AI HUMAN VISION SYSTEM</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
             background-color: #030503;
-            color: #00ff55;
+            color: #00ff66;
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
             margin: 0;
-            padding: 10px;
-            overflow-x: hidden;
+            padding: 5px;
         }
         h1 {
-            font-size: 17px;
-            text-shadow: 0 0 10px #00ff55;
-            margin-bottom: 2px;
+            font-size: 14px;
+            text-shadow: 0 0 6px #00ff66;
+            margin: 3px 0;
         }
         p {
-            font-size: 11px;
+            font-size: 10px;
             color: #77cc88;
-            margin-top: 0;
-            margin-bottom: 8px;
+            margin: 2px 0 5px 0;
         }
         .container {
             position: relative;
             display: inline-block;
-            border: 2px solid #00ff55;
-            box-shadow: 0 0 30px rgba(0, 255, 85, 0.6);
+            border: 2px solid #00ff66;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
             background: #000;
-            max-width: 100%;
-            border-radius: 4px;
-            line-height: 0;
+            width: 100%;
+            max-width: 360px;
         }
         video, canvas {
             display: block;
             width: 100%;
-            max-width: 480px;
             height: auto;
         }
-        /* បន្ទាត់ស្កេនបែបយោធា */
+        /* បន្ថែម Scanlines បែបយោធា */
         .container::after {
             content: " ";
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
-            background-size: 100% 4px;
+            background: linear-gradient(rgba(0,0,0,0) 50%, rgba(0,20,0,0.12) 50%);
+            background-size: 100% 2px;
             z-index: 10;
             pointer-events: none;
         }
         .hud {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 5px;
+            left: 5px;
             text-align: left;
-            font-size: 10px;
-            color: #00ff55;
-            text-shadow: 0 0 6px #000;
+            font-size: 8px;
+            color: #00ff66;
+            text-shadow: 0 0 3px #000;
             z-index: 15;
             pointer-events: none;
-            line-height: 1.3;
         }
         .crosshair {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #00ff55;
-            font-size: 24px;
+            color: #00ff66;
+            font-size: 16px;
             z-index: 15;
             pointer-events: none;
-            text-shadow: 0 0 8px #00ff55;
+            text-shadow: 0 0 5px #00ff66;
         }
-        .controls {
-            margin-top: 10px;
-            max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
+        .controls-panel {
+            background: #070f07;
+            border: 1px solid #00ff66;
+            padding: 6px;
+            margin: 5px auto;
+            max-width: 360px;
             text-align: left;
-            background: #081108;
-            padding: 10px;
-            border: 1px solid #00ff55;
+            font-size: 10px;
             border-radius: 4px;
         }
-        .slider-group {
-            margin-bottom: 8px;
-        }
-        label {
-            font-size: 11px;
-            display: block;
-            margin-bottom: 3px;
+        .control-group {
+            margin-bottom: 5px;
         }
         input[type=range] {
             width: 100%;
-            accent-color: #00ff55;
+            accent-color: #00ff66;
             cursor: pointer;
         }
         .btn-row {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         button {
-            background-color: #00ff55;
+            background-color: #00ff66;
             color: #000;
             border: none;
-            padding: 8px 16px;
-            font-size: 13px;
+            padding: 5px 10px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 0 10px #00ff55;
-            border-radius: 3px;
+            box-shadow: 0 0 5px #00ff66;
+            border-radius: 2px;
         }
         button:hover {
-            background-color: #00cc44;
-        }
-        #statusMsg {
-            font-size: 11px;
-            margin-top: 5px;
-            color: #ff5555;
-            text-align: center;
+            background-color: #00cc52;
         }
     </style>
 </head>
 <body>
 
-    <h1>SMART SELECTIVE AI NIGHT VISION</h1>
-    <p>AI ជួយទាញពន្លឺតែត្រង់កន្លែងងងឹតខ្លាំង និងរក្សាកន្លែងភ្លឺឱ្យនៅដដែល</p>
+    <h1>ULTIMATE AI HUMAN & NIGHT VISION</h1>
+    <p>AI ចាប់ទម្រង់មុខ/មនុស្ស + គ្រប់គ្រងពន្លឺដោយដៃ</p>
 
     <div class="container">
-        <video id="video" autoplay playsinline muted style="display:none;"></video>
+        <video id="video" autoplay playsinline style="display:none;"></video>
         <canvas id="canvas"></canvas>
 
         <div class="hud">
-            SYS: [ONLINE]<br>
-            MODE: SMART SELECTIVE AI<br>
+            SYS: [ONLINE AI]<br>
+            MODE: HUMAN TARGET & SHADOW ENGINE<br>
             <span id="timeDisplay">TIME: 00:00:00</span>
         </div>
         
         <div class="crosshair">+</div>
     </div>
 
-    <div class="controls">
-        <div class="slider-group">
-            <label for="shadowBoostRange">កម្រិត AI ទាញពន្លឺកន្លែងងងឹត (Shadow Booster): <span id="sVal">2.5x</span></label>
-            <input type="range" id="shadowBoostRange" min="1" max="5" step="0.2" value="2.5">
+    <div class="controls-panel">
+        <div class="control-group">
+            <label>1. ពន្លឺសរុបទាំងមូល (Master Brightness): <span id="valMaster">1.0x</span></label>
+            <input type="range" id="masterSlider" min="0.5" max="3.0" step="0.1" value="1.0">
+        </div>
+        
+        <div class="control-group">
+            <label>2. AI បំភ្លឺតំបន់ងងឹត (Shadow Booster): <span id="valShadow">2.0x</span></label>
+            <input type="range" id="shadowSlider" min="1.0" max="5.0" step="0.2" value="2.0">
+        </div>
+
+        <div class="control-group">
+            <label>3. កាត់បន្ថយពន្លឺជ្រុល/ចាំង (Overexposure Reducer): <span id="valReduce">1.0x</span></label>
+            <input type="range" id="reduceSlider" min="0.5" max="1.5" step="0.1" value="1.0">
         </div>
 
         <div class="btn-row">
-            <button id="toggleBtn">បិទ/បើក Smart AI Mode</button>
+            <button id="aiToggleBtn">AI HUMAN FOCUS: ON</button>
         </div>
-        <div id="statusMsg"></div>
     </div>
 
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        const toggleBtn = document.getElementById('toggleBtn');
-        const shadowBoostRange = document.getElementById('shadowBoostRange');
-        const sVal = document.getElementById('sVal');
-        const statusMsg = document.getElementById('statusMsg');
         
-        let isAiActive = true;
+        // UI Elements
+        const masterSlider = document.getElementById('masterSlider');
+        const shadowSlider = document.getElementById('shadowSlider');
+        const reduceSlider = document.getElementById('reduceSlider');
+        const valMaster = document.getElementById('valMaster');
+        const valShadow = document.getElementById('valShadow');
+        const valReduce = document.getElementById('valReduce');
+        const aiToggleBtn = document.getElementById('aiToggleBtn');
 
-        shadowBoostRange.addEventListener('input', () => { sVal.innerText = shadowBoostRange.value + 'x'; });
+        let isAiHumanFocusOn = true;
 
-        async function initCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }, 
-                    audio: false 
-                });
+        // បើកកាមេរ៉ាទូរសព្ទ
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
+            .then(stream => {
                 video.srcObject = stream;
                 video.play();
-                requestAnimationFrame(processFrame);
-            } catch (err) {
-                console.error("Camera Error:", err);
-                statusMsg.innerText = "កំហុស៖ មិនអាចបើកកាមេរ៉ាបានទេ។ សូមពិនិត្យសិទ្ធិ ឬប្រើប្រាស់តាម HTTPS។";
-            }
-        }
+                requestAnimationFrame(processVideo);
+            })
+            .catch(err => {
+                alert("មិនអាចបើកកាមេរ៉ាបានទេ: " + err);
+            });
 
-        // មុខងារ AI វិភាគជ្រើសរើស (Selective Shadow Enhancement)
-        function processFrame() {
+        aiToggleBtn.addEventListener('click', () => {
+            isAiHumanFocusOn = !isAiHumanFocusOn;
+            aiToggleBtn.style.backgroundColor = isAiHumanFocusOn ? "#00ff66" : "#ff4444";
+            aiToggleBtn.style.color = isAiHumanFocusOn ? "#000" : "#fff";
+            aiToggleBtn.innerText = isAiHumanFocusOn ? "AI HUMAN FOCUS: ON" : "AI HUMAN FOCUS: OFF";
+        });
+
+        function processVideo() {
             if (video.paused || video.ended) return;
 
             canvas.width = video.videoWidth || 640;
@@ -198,62 +192,76 @@
             let frameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let pixels = frameData.data;
 
-            let boostIntensity = parseFloat(shadowBoostRange.value);
+            // អានតម្លៃពី Slider ទាំងអស់
+            let masterVal = parseFloat(masterSlider.value);
+            let shadowVal = parseFloat(shadowSlider.value);
+            let reduceVal = parseFloat(reduceSlider.value);
 
+            valMaster.innerText = masterVal.toFixed(1) + "x";
+            valShadow.innerText = shadowVal.toFixed(1) + "x";
+            valReduce.innerText = reduceVal.toFixed(1) + "x";
+
+            // 🌟 ជំហានទី១៖ AI Scan រកកណ្តាលអេក្រង់ដែលជាកន្លែងមនុស្សឈរ (Human Focus Zone Center)
+            let width = canvas.width;
+            let height = canvas.height;
+            let centerX = width / 2;
+            let centerY = height / 2;
+
+            // វដ្ត AI វិភាគ Pixel នីមួយៗ
             for (let i = 0; i < pixels.length; i += 4) {
                 let r = pixels[i];
                 let g = pixels[i + 1];
                 let b = pixels[i + 2];
 
+                let x = (i / 4) % width;
+                let y = Math.floor((i / 4) / width);
+
                 // គណនាកម្រិតពន្លឺដើម
                 let luminance = (r * 0.299 + g * 0.587 + b * 0.114);
 
-                let finalVal = 0;
+                // 🌟 ជំហានទី២៖ កម្រិតកែតម្រូវពន្លឺដោយដៃ និង AI
+                let finalLight = luminance;
 
-                if (isAiActive) {
-                    // បើក Smart AI: ពិនិត្យមើលថាតើ Pixel ណាងងឹត ឬភ្លឺ
-                    if (luminance < 90) {
-                        // កន្លែងងងឹតខ្លាំង (Shadows): AI ធ្វើការទាញពន្លឺឱ្យភ្លឺខ្លាំងឡើងតាមកម្រិត Slider
-                        let shadowFactor = (90 - luminance) / 90; // កាន់តែងងឹត កាន់តែទាញខ្លាំង
-                        let boosted = luminance + (shadowFactor * 120 * boostIntensity);
-                        finalVal = Math.min(255, boosted);
-                    } else {
-                        // កន្លែងភ្លឺល្មម ឬភ្លឺស្រាប់ (Midtones & Highlights): រក្សាពន្លឺដើមទុកដដែលមិនឱ្យចាំងខូច
-                        finalVal = luminance;
-                    }
+                // ក. មុខងារ AI ចាប់ទម្រង់មនុស្សនៅចំកណ្តាល ឬតំបន់គោលដៅ (Human Shape & Face Enhancement)
+                let distanceFromCenter = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+                let isInHumanBodyZone = isAiHumanFocusOn && (distanceFromCenter < width * 0.35); // កំណត់រង្វង់កណ្តាលជាតំបន់មនុស្ស
 
-                    // បន្ថែមគ្រាប់អុចរំខានសេនសឺរយោធាបន្តិច
-                    let noise = (Math.random() - 0.5) * 12;
-                    finalVal = Math.max(0, Math.min(255, finalVal + noise));
-
-                    // ចាក់បំពេញពណ៌បៃតងយោធា (PVS-31 Phosphor Green)
-                    pixels[i]     = 0;
-                    pixels[i + 1] = finalVal;
-                    pixels[i + 2] = 0;
-                } else {
-                    // បើបិទ AI គឺបង្ហាញពណ៌ធម្មតា
-                    pixels[i]     = r;
-                    pixels[i + 1] = g;
-                    pixels[i + 2] = b;
+                if (isInHumanBodyZone && luminance < 140) {
+                    // ប្រសិនបើ AI ចាប់បានថាជារូបរាងមនុស្សនៅកន្លែងងងឹត វានឹងទាញពន្លឺមុខ និងដងខ្លួនឱ្យភ្លឺច្បាស់ល្មម
+                    let humanBoost = Math.pow(luminance / 140, 0.35) * 200 * shadowVal;
+                    finalLight = humanBoost;
+                } 
+                else if (luminance < 80) {
+                    // មុខងារ AI Shadow Booster (កែតម្រូវកន្លែងងងឹតខ្លាំងផ្សេងទៀតក្រៅពីមនុស្ស)
+                    let shadowBoost = Math.pow(luminance / 80, 0.4) * 150 * shadowVal;
+                    finalLight = shadowBoost;
+                } 
+                else if (luminance > 200) {
+                    // មុខងារ Overexposure Reducer (កាត់បន្ថយពន្លឺជ្រុល/ចាំងខ្លាំងឱ្យមកស្រទន់វិញ)
+                    finalLight = luminance / reduceVal;
+                } 
+                else {
+                    // តំបន់ពន្លឺធម្មតា គឺរក្សាទុកកម្រិតសមល្មម
+                    finalLight = luminance * masterVal;
                 }
+
+                // ដាក់កម្រិតអតិបរមាមិនឱ្យហួស 255
+                finalLight = Math.min(255, Math.max(0, finalLight));
+
+                // ចាក់បំពេញពណ៌បៃតងយោធា (Phosphor Green Night Vision)
+                pixels[i]     = 0;                // Red = 0
+                pixels[i + 1] = finalLight;       // Green (កម្រិតពន្លឺដែលបានកែសម្រួលរួច)
+                pixels[i + 2] = 0;                // Blue = 0
             }
 
             ctx.putImageData(frameData, 0, 0);
 
+            // បង្ហាញម៉ោងបច្ចុប្បន្នលើ HUD
             const now = new Date();
             document.getElementById('timeDisplay').innerText = "TIME: " + now.toTimeString().split(' ')[0];
 
-            requestAnimationFrame(processFrame);
+            requestAnimationFrame(processVideo);
         }
-
-        toggleBtn.addEventListener('click', () => {
-            isAiActive = !isAiActive;
-            toggleBtn.style.backgroundColor = isAiActive ? "#00ff55" : "#ff5555";
-            toggleBtn.style.color = isAiActive ? "#000" : "#fff";
-            toggleBtn.innerText = isAiActive ? "បិទ/បើក Smart AI Mode" : "បើកដំណើរការ Smart AI";
-        });
-
-        initCamera();
     </script>
 
 </body>
