@@ -4,8 +4,12 @@ from flask import Flask, Response, render_template
 
 app = Flask(__name__)
 
-# បើកកាមេរ៉ា
+# បើកកាមេរ៉ា (ប្រសិនបើលេខ 0 เปิดមិនចេញ សូមប្តូរទៅជា 1 ឬ 2)
 camera = cv2.VideoCapture(0)
+
+# បើសិនជាកាមេរ៉ាមើលមិនឃើញ សូមពិនិត្យមើលថាតើមានកម្មវិធីផ្សេងកំពុងប្រើប្រាស់វាដែរឬទេ។
+if not camera.isOpened():
+    print(" সতর্কতা៖ មិនអាចបើកកាមេរ៉ាបានទេ! សូមពិនិត្យមើល Camera Index (ប្តូរ 0 ជា 1)")
 
 def military_grade_night_vision(frame):
     # ១. បម្លែងរូបភាពទៅជា LAB Color Space
@@ -19,7 +23,7 @@ def military_grade_night_vision(frame):
     # ៣. Bilateral Filter កម្រិតខ្ពស់ ដើម្បីបំបាត់គ្រាប់អុចរំខានពេលទាញពន្លឺខ្លាំង
     denoised_l = cv2.bilateralFilter(cl, d=11, sigmaColor=85, sigmaSpace=85)
     
-    # ៤. Advanced Gamma & Digital Gain (សمیនិម្មិតសេនសឺរយោធាជំនាន់ទី៣)
+    # ៤. Advanced Gamma & Digital Gain
     gamma = 1.8
     inv_gamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** inv_gamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
@@ -29,14 +33,12 @@ def military_grade_night_vision(frame):
     limg = cv2.merge((bright_l, a, b))
     enhanced_frame = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
     
-    # ៥. បម្លែងទៅជា Grayscale និងប្រើ Laplacian Edge Sharpening ឱ្យវត្ថុមុខស្រួចច្បាស់
+    # ៥. បម្លែងទៅជា Grayscale និងប្រើ Laplacian Edge Sharpening ឱ្យវត្ថុមុតស្រួចច្បាស់
     gray = cv2.cvtColor(enhanced_frame, cv2.COLOR_BGR2GRAY)
     
-    # ដាក់គែមឱ្យច្បាស់ (Sharpening filter)
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
     sharpened = cv2.filter2D(gray, -1, kernel)
     
-    # បន្ថែម Contrast ខ្លាំង
     processed = cv2.convertScaleAbs(sharpened, alpha=2.5, beta=15)
     
     # ៦. បង្កើតបែបផែនពណ៌បៃតងយោធា (Military Phosphor Green PVS-14)
