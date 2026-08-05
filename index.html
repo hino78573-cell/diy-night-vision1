@@ -3,84 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIL-SPEC 80% AI Night Vision System</title>
+    <title>ULTIMATE SELECTIVE AI NIGHT VISION</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            background-color: #030603;
+            background-color: #030503;
             color: #00ff55;
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
             margin: 0;
             padding: 10px;
+            overflow-x: hidden;
         }
         h1 {
-            font-size: 20px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 8px #00ff55;
+            font-size: 17px;
+            text-shadow: 0 0 10px #00ff55;
+            margin-bottom: 2px;
         }
-        .video-container {
-            margin-top: 10px;
-            border: 2px solid #00ff55;
-            display: inline-block;
-            box-shadow: 0 0 15px #00ff55;
-            background: #000;
+        p {
+            font-size: 11px;
+            color: #77cc88;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+        .container {
             position: relative;
+            display: inline-block;
+            border: 2px solid #00ff55;
+            box-shadow: 0 0 30px rgba(0, 255, 85, 0.6);
+            background: #000;
+            max-width: 100%;
+            border-radius: 4px;
+            line-height: 0;
         }
-        img {
-            width: 100%;
-            max-width: 600px;
-            height: auto;
+        video, canvas {
             display: block;
+            width: 100%;
+            max-width: 480px;
+            height: auto;
         }
-        .hud-overlay {
+        /* បន្ទាត់ស្កេនបែបយោធា */
+        .container::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            background-size: 100% 4px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .hud {
             position: absolute;
             top: 10px;
             left: 10px;
-            font-size: 12px;
-            color: #00ff55;
-            text-shadow: 0 0 4px #00ff55;
-            pointer-events: none;
             text-align: left;
-        }
-        .status {
-            margin-top: 10px;
-            font-size: 13px;
-            color: #00cc44;
-        }
-        .scanlines {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
-            background-size: 100% 4px;
+            font-size: 10px;
+            color: #00ff55;
+            text-shadow: 0 0 6px #000;
+            z-index: 15;
             pointer-events: none;
+            line-height: 1.3;
+        }
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ff55;
+            font-size: 24px;
+            z-index: 15;
+            pointer-events: none;
+            text-shadow: 0 0 8px #00ff55;
+        }
+        .controls {
+            margin-top: 10px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            background: #081108;
+            padding: 10px;
+            border: 1px solid #00ff55;
+            border-radius: 4px;
+        }
+        .slider-group {
+            margin-bottom: 8px;
+        }
+        label {
+            font-size: 11px;
+            display: block;
+            margin-bottom: 3px;
+        }
+        input[type=range] {
+            width: 100%;
+            accent-color: #00ff55;
+            cursor: pointer;
+        }
+        .btn-row {
+            text-align: center;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #00ff55;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00ff55;
+            border-radius: 3px;
+        }
+        button:hover {
+            background-color: #00cc44;
+        }
+        #statusMsg {
+            font-size: 11px;
+            margin-top: 5px;
+            color: #ff5555;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <h1>[ MIL-SPEC 80% AI NIGHT VISION ]</h1>
-    
-    <div class="video-container">
-        <img src="{{ url_for('video_feed') }}" alt="AI Night Vision Stream">
-        <div class="hud-overlay">
-            SYS: ACTIVE<br>
-            MODE: PVS-14 AI<br>
-            GAIN: +80% BOOST
+    <h1>SMART SELECTIVE AI NIGHT VISION</h1>
+    <p>AI ជួយទាញពន្លឺតែត្រង់កន្លែងងងឹតខ្លាំង និងរក្សាកន្លែងភ្លឺឱ្យនៅដដែល</p>
+
+    <div class="container">
+        <video id="video" autoplay playsinline muted style="display:none;"></video>
+        <canvas id="canvas"></canvas>
+
+        <div class="hud">
+            SYS: [ONLINE]<br>
+            MODE: SMART SELECTIVE AI<br>
+            <span id="timeDisplay">TIME: 00:00:00</span>
         </div>
-        <div class="scanlines"></div>
+        
+        <div class="crosshair">+</div>
     </div>
 
-    <div class="status">
-        ស្ថានភាព៖ ដំណើរការដោយគ្មានពិល (Starlight AI Sensor) | ម៉ោង៖ <span id="time"></span>
+    <div class="controls">
+        <div class="slider-group">
+            <label for="shadowBoostRange">កម្រិត AI ទាញពន្លឺកន្លែងងងឹត (Shadow Booster): <span id="sVal">2.5x</span></label>
+            <input type="range" id="shadowBoostRange" min="1" max="5" step="0.2" value="2.5">
+        </div>
+
+        <div class="btn-row">
+            <button id="toggleBtn">បិទ/បើក Smart AI Mode</button>
+        </div>
+        <div id="statusMsg"></div>
     </div>
 
     <script>
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('time').innerText = now.toLocaleTimeString();
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const toggleBtn = document.getElementById('toggleBtn');
+        const shadowBoostRange = document.getElementById('shadowBoostRange');
+        const sVal = document.getElementById('sVal');
+        const statusMsg = document.getElementById('statusMsg');
+        
+        let isAiActive = true;
+
+        shadowBoostRange.addEventListener('input', () => { sVal.innerText = shadowBoostRange.value + 'x'; });
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }, 
+                    audio: false 
+                });
+                video.srcObject = stream;
+                video.play();
+                requestAnimationFrame(processFrame);
+            } catch (err) {
+                console.error("Camera Error:", err);
+                statusMsg.innerText = "កំហុស៖ មិនអាចបើកកាមេរ៉ាបានទេ។ សូមពិនិត្យសិទ្ធិ ឬប្រើប្រាស់តាម HTTPS។";
+            }
         }
-        setInterval(updateTime, 1000);
-        updateTime();
+
+        // មុខងារ AI វិភាគជ្រើសរើស (Selective Shadow Enhancement)
+        function processFrame() {
+            if (video.paused || video.ended) return;
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            let frameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let pixels = frameData.data;
+
+            let boostIntensity = parseFloat(shadowBoostRange.value);
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                let r = pixels[i];
+                let g = pixels[i + 1];
+                let b = pixels[i + 2];
+
+                // គណនាកម្រិតពន្លឺដើម
+                let luminance = (r * 0.299 + g * 0.587 + b * 0.114);
+
+                let finalVal = 0;
+
+                if (isAiActive) {
+                    // បើក Smart AI: ពិនិត្យមើលថាតើ Pixel ណាងងឹត ឬភ្លឺ
+                    if (luminance < 90) {
+                        // កន្លែងងងឹតខ្លាំង (Shadows): AI ធ្វើការទាញពន្លឺឱ្យភ្លឺខ្លាំងឡើងតាមកម្រិត Slider
+                        let shadowFactor = (90 - luminance) / 90; // កាន់តែងងឹត កាន់តែទាញខ្លាំង
+                        let boosted = luminance + (shadowFactor * 120 * boostIntensity);
+                        finalVal = Math.min(255, boosted);
+                    } else {
+                        // កន្លែងភ្លឺល្មម ឬភ្លឺស្រាប់ (Midtones & Highlights): រក្សាពន្លឺដើមទុកដដែលមិនឱ្យចាំងខូច
+                        finalVal = luminance;
+                    }
+
+                    // បន្ថែមគ្រាប់អុចរំខានសេនសឺរយោធាបន្តិច
+                    let noise = (Math.random() - 0.5) * 12;
+                    finalVal = Math.max(0, Math.min(255, finalVal + noise));
+
+                    // ចាក់បំពេញពណ៌បៃតងយោធា (PVS-31 Phosphor Green)
+                    pixels[i]     = 0;
+                    pixels[i + 1] = finalVal;
+                    pixels[i + 2] = 0;
+                } else {
+                    // បើបិទ AI គឺបង្ហាញពណ៌ធម្មតា
+                    pixels[i]     = r;
+                    pixels[i + 1] = g;
+                    pixels[i + 2] = b;
+                }
+            }
+
+            ctx.putImageData(frameData, 0, 0);
+
+            const now = new Date();
+            document.getElementById('timeDisplay').innerText = "TIME: " + now.toTimeString().split(' ')[0];
+
+            requestAnimationFrame(processFrame);
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            isAiActive = !isAiActive;
+            toggleBtn.style.backgroundColor = isAiActive ? "#00ff55" : "#ff5555";
+            toggleBtn.style.color = isAiActive ? "#000" : "#fff";
+            toggleBtn.innerText = isAiActive ? "បិទ/បើក Smart AI Mode" : "បើកដំណើរការ Smart AI";
+        });
+
+        initCamera();
     </script>
 
 </body>
