@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clear Black & White Night Vision Cam</title>
+    <title>MAXIMUM DARKNESS AMPLIFIER v4.0</title>
     <style>
         body {
             margin: 0;
@@ -18,20 +18,21 @@
             overflow: hidden;
         }
         h1 { 
-            font-size: 15px; 
+            font-size: 13px; 
             margin-bottom: 15px; 
-            text-shadow: 0 0 8px #ffffff; 
+            text-shadow: 0 0 10px #ffffff; 
             text-align: center;
+            letter-spacing: 1px;
         }
         #webcam { display: none; }
         .video-box {
             border: 2px solid #ffffff;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.4);
             border-radius: 10px;
             overflow: hidden;
             width: 95%;
             max-width: 640px;
-            background-color: #050505;
+            background-color: #000000;
         }
         canvas {
             width: 100%;
@@ -39,12 +40,14 @@
             display: block;
         }
         .status-bar {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #aaaaaa;
-            animation: blink 1.5s infinite;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #ff0000;
+            font-weight: bold;
+            letter-spacing: 1px;
+            animation: textBlink 2s infinite;
         }
-        @keyframes blink {
+        @keyframes textBlink {
             0% { opacity: 0.4; }
             50% { opacity: 1; }
             100% { opacity: 0.4; }
@@ -53,7 +56,7 @@
 </head>
 <body>
 
-    <h1>👁️ DIGITAL IR NIGHT VISION • MODE: BLACK & WHITE</h1>
+    <h1>🚨 PURE DIGITAL NIGHT VISION • HARDWARE ISO: CRITICAL MAX</h1>
     
     <video id="webcam" autoplay playsinline></video>
     
@@ -61,7 +64,7 @@
         <canvas id="nightCanvas"></canvas>
     </div>
 
-    <div class="status-bar">📡 SYSTEM: ACTIVE (NO FILTER)</div>
+    <div class="status-bar">⚡ SYSTEM: EXPONENTIAL GAIN ON (GAMMA 0.15) • FLASH: OFF</div>
 
     <script>
         const video = document.getElementById('webcam');
@@ -80,7 +83,7 @@
                 });
                 video.srcObject = stream;
             } catch (err) {
-                alert("សូមអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ាទូរសព្ទ ដើម្បីដំណើរការប្រព័ន្ធមើលយប់!");
+                alert("សូមអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ា ដើម្បីដំណើរការប្រព័ន្ធ!");
             }
         }
 
@@ -90,6 +93,7 @@
             processFrame();
         });
 
+        // 🔄 គណិតវិទ្យាគុណពន្លឺឡើងដល់កម្រិតកំពូលបង្អស់ (Ultimate Software Brightness Boost)
         function processFrame() {
             if (video.paused || video.ended) return;
 
@@ -98,29 +102,40 @@
             let frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let data = frame.data;
 
-            // ល្បឿនបង្កើនពន្លឺឌីជីថល (ដំឡើង ISO កម្រិតខ្ពស់)
-            const gamma = 0.35; 
-            const brightnessBoost = 40; 
+            // ⚠️ ប៉ារ៉ាម៉ែត្រកែកម្រិតពន្លឺខ្លាំងបំផុត និងខ្លាំងបង្អស់ (Max Power Parameters)
+            const gamma = 0.15;        // ទម្លាក់ដល់បាត ដើម្បីទាញយកពន្លឺងងឹតស្លុបមកបង្ហាញ
+            const exposureGain = 3.5;  // គុណពង្រីកសាច់វីដេអូឡើង ៣.៥ ដងភ្លាមៗ
+            const baseBrightness = 65; // បន្ថែមពន្លឺផ្ទៃក្រោយ
 
             for (let i = 0; i < data.length; i += 4) {
                 let r = data[i];     
                 let g = data[i + 1]; 
                 let b = data[i + 2]; 
 
-                // ១. បំប្លែងទៅជាកម្រិតពន្លឺសខ្មៅ (True Grayscale)
+                // បំប្លែងទៅជាកម្រិតពន្លឺសខ្មៅ (True Grayscale)
                 let luminance = 0.299 * r + 0.587 * g + 0.114 * b;
 
-                // ២. គណនាជម្រុញពន្លឺកន្លែងងងឹតស្លុបឱ្យឡើងភ្លឺ (Gamma Correction)
+                // ១. រូបមន្តគណនា Gamma Correction កម្រិតខ្ពស់បង្អស់
                 let normalized = luminance / 255;
-                let boosted = Math.pow(normalized, gamma) * 255 + brightnessBoost;
+                let boosted = Math.pow(normalized, gamma) * 255;
                 
-                // ទប់ពន្លឺមិនឱ្យឆេះសខ្លាំងពេក
+                // ២. រូបមន្តគុណ Exposure Gain ឌីជីថលបន្ថែមពីលើ
+                boosted = (boosted * exposureGain) + baseBrightness;
+                
+                // ៣. បន្ថែម Contrast Sharpness (ធ្វើឱ្យគែមវត្ថុដាច់ពីគ្នា មិនព្រិលទោះជាទាញពន្លឺខ្លាំង)
+                if (boosted > 128) {
+                    boosted = boosted + (boosted - 128) * 0.3;
+                } else {
+                    boosted = boosted - (128 - boosted) * 0.3;
+                }
+
+                // ទប់លំនឹងពន្លឺមិនឱ្យលើសពីកម្រិតអតិបរមា ២ cages នៃគ្រាប់ពណ៌
                 boosted = Math.min(255, Math.max(0, boosted));
 
-                // ៣. បញ្ចូលតម្លៃពណ៌ស្មើគ្នាទាំង ៣ ជួរ ដើម្បីឱ្យចេញជាពណ៌សខ្មៅម៉ត់ស្អាត គ្មានឆ្នូត
-                data[i]     = boosted; // ពណ៌ក្រហម
-                data[i + 1] = boosted; // ពណ៌បៃតង
-                data[i + 2] = boosted; // ពណ៌ខៀវ
+                // បង្ហាញលទ្ធផលសខ្មៅម៉ត់ច្បាស់ គ្មានឆ្នូត
+                data[i]     = boosted; 
+                data[i + 1] = boosted; 
+                data[i + 2] = boosted; 
             }
 
             ctx.putImageData(frame, 0, 0);
