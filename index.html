@@ -3,91 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Military Native AI Goggles v8.0</title>
+    <title>MIL-SPEC 80% AI Night Vision System</title>
     <style>
-        /* 🎨 ប្រព័ន្ធរចនាផ្ទាំងអេក្រង់វ៉ែនតាយោធា (Combat HUD Styling) */
         body {
-            margin: 0;
-            background-color: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            background-color: #030603;
+            color: #00ff55;
             font-family: 'Courier New', Courier, monospace;
-            color: #00ff00;
-            overflow: hidden;
-            user-select: none;
-        }
-        h1 { 
-            font-size: 13px; 
-            margin-bottom: 10px; 
-            text-shadow: 0 0 10px #00ff00; 
             text-align: center;
-            letter-spacing: 2px;
+            margin: 0;
+            padding: 10px;
         }
-        #webcam { display: none; }
-        .video-box {
-            border: 2px solid #00ff00;
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
-            border-radius: 12px;
-            overflow: hidden;
-            width: 95%;
-            max-width: 640px;
+        h1 {
+            font-size: 20px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px #00ff55;
+        }
+        .video-container {
+            margin-top: 10px;
+            border: 2px solid #00ff55;
+            display: inline-block;
+            box-shadow: 0 0 15px #00ff55;
+            background: #000;
             position: relative;
-            background-color: #000000;
         }
-        /* បន្ថែមខ្សែវាស់មុំបែបវ៉ែនតាកងទ័ព (Crosshair Overlay) */
-        .video-box::before {
-            content: "+";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: rgba(0, 255, 0, 0.6);
-            font-size: 28px;
-            z-index: 10;
-            pointer-events: none;
-            text-shadow: 0 0 5px #00ff00;
-        }
-        canvas {
+        img {
             width: 100%;
+            max-width: 600px;
             height: auto;
             display: block;
         }
-        .status-container {
-            width: 95%;
-            max-width: 640px;
-            margin-top: 12px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: bold;
-            letter-spacing: 1px;
+        .hud-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #00ff55;
+            text-shadow: 0 0 4px #00ff55;
+            pointer-events: none;
+            text-align: left;
         }
-        .blink-text {
-            animation: textBlink 1.5s infinite;
+        .status {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #00cc44;
         }
-        @keyframes textBlink {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <h1>⚡ MILITARY NIGHT VISION • CORE: NATIVE PYTHON AI</h1>
+    <h1>[ MIL-SPEC 80% AI NIGHT VISION ]</h1>
     
-    <div class="video-box">
-        <video id="webcam" autoplay playsinline muted></video>
-        <!-- អេក្រង់ចម្បងបង្ហាញវីដេអូបៃតងម៉ត់ និងប្រអប់ Target Lock ពី Python -->
-        <canvas id="nightCanvas"></canvas>
+    <div class="video-container">
+        <img src="{{ url_for('video_feed') }}" alt="AI Night Vision Stream">
+        <div class="hud-overlay">
+            SYS: ACTIVE<br>
+            MODE: PVS-14 AI<br>
+            GAIN: +80% BOOST
+        </div>
+        <div class="scanlines"></div>
     </div>
 
-    <div class="status-container">
-        <span class="blink-text">🔴 SYSTEM: ACTIVE_STREAM</span>
-        <span>SYS_GAIN: 800%</span>
-        <span>CORE: NATIVE_AI</span>
+    <div class="status">
+        ស្ថានភាព៖ ដំណើរការដោយគ្មានពិល (Starlight AI Sensor) | ម៉ោង៖ <span id="time"></span>
     </div>
 
-    <!-- 📝 [ចំណាំ]៖ កូដផ្នែកស្គ្រីប JavaScript (Part 2) សម្រាប់បើកកាមេរ៉ា និងផ្ញើទៅ Python នឹងត្រូវដាក់បន្តនៅខាងក្រោមជួរនេះ -->
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+
+</body>
+</html>
