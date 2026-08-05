@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YOLOv8 AI Powered Night Vision Goggles</title>
-    <!-- 🤖 ហៅប្រព័ន្ធរត់ម៉ូដែល AI កម្រិតធ្ងន់ (ONNX Runtime) និងស្គ្រីបជំនួយពី CDN -->
-    <script src="https://jsdelivr.net"></script>
+    <title>Military Grade Green Night Vision</title>
     <style>
         body {
             margin: 0;
@@ -21,12 +19,11 @@
         }
         h1 { 
             font-size: 13px; 
-            margin-bottom: 10px; 
+            margin-bottom: 15px; 
             text-shadow: 0 0 10px #00ff00; 
             text-align: center;
             letter-spacing: 1px;
         }
-        #webcam { display: none; }
         .video-box {
             border: 2px solid #00ff00;
             box-shadow: 0 0 35px rgba(0, 255, 0, 0.4);
@@ -34,17 +31,20 @@
             overflow: hidden;
             width: 95%;
             max-width: 640px;
-            position: relative;
             background-color: #000000;
         }
-        canvas {
+        
+        /* 🔄 ប្រព័ន្ធ Matrix Green Core: ជម្រុញពន្លឺ ៦ដង និងដំឡើង Contrast ខ្ពស់បង្អស់ */
+        video {
             width: 100%;
             height: auto;
             display: block;
-            /* 🔄 Multi-Stage Filter: បំប្លែងទៅជាសខ្មៅ ជម្រុញពន្លឺកម្រិតធ្ងន់ ៥.៥ដង និង Contrast ខ្ពស់បង្អស់ */
-            filter: grayscale(100%) brightness(5.5) contrast(3.5);
-            -webkit-filter: grayscale(100%) brightness(5.5) contrast(3.5);
+            
+            /* ប្រើប្រាស់ SVG Filter បូករួមជាមួយ CSS Effects ដើម្បីទម្លាយភាពងងឹត */
+            filter: url(#military-green-matrix) brightness(6.0) contrast(4.0);
+            -webkit-filter: url(#military-green-matrix) brightness(6.0) contrast(4.0);
         }
+        
         .status-bar {
             margin-top: 12px;
             font-size: 11px;
@@ -56,26 +56,30 @@
 </head>
 <body>
 
-    <h1>⚡ HEAVY AI NIGHT VISION • SYSTEM CORE: YOLOv8 TARGET THERMAL LOCK</h1>
+    <h1>⚡ MILITARY NIGHT VISION • CORE: MATRIX GREEN MAX</h1>
     
     <div class="video-box">
+        <!-- រត់វីដេអូចំៗផ្ទាល់ពី Hardware ធានាមិនលោត Error គាំងទៀតឡើយ -->
         <video id="webcam" autoplay playsinline muted></video>
-        <!-- អេក្រង់ចម្បងដែល AI ធ្វើការគណនា និងគូសប្លង់កម្រិតច្បាស់ -->
-        <canvas id="nightCanvas"></canvas>
     </div>
 
-    <div class="status-bar" id="aiStatus">🤖 AI THREAT SCANNER: LOADING HEAVY CORES...</div>
+    <div class="status-bar">📡 SYSTEM: ONLINE • GAIN: 600% • FILTER: PURE GREEN</div>
+
+    <!-- 🟢 បន្ទះកូដពណ៌បៃតងយោធាពិសេស សម្រាប់ស្រូបយកភាគល្អិតពន្លឺតូចៗមកពង្រីកឱ្យច្បាស់ -->
+    <svg xmlns="http://w3.org" style="display: none;">
+        <filter id="military-green-matrix">
+            <feColorMatrix type="matrix" values="
+                0.1  0.1  0.1  0  0
+                0.5  1.0  0.5  0  0
+                0.1  0.1  0.1  0  0
+                0    0    0    1  0"/>
+        </filter>
+    </svg>
 
     <script>
         const video = document.getElementById('webcam');
-        const canvas = document.getElementById('nightCanvas');
-        const ctx = canvas.getContext('2d');
-        const aiStatus = document.getElementById('aiStatus');
-        let session = null;
 
-        // ឈ្មោះវត្ថុសំខាន់ៗដែល YOLOv8 អាចស្កេនរកឃើញក្នុងងងឹត (មនុស្ស, សត្វ, យានយន្ត)
-        const yoloClasses = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush"];
-
+        // កូដសុំសិទ្ធិបើកកាមេរ៉ាក្រោយរបស់ទូរសព្ទ
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -87,133 +91,16 @@
                     audio: false 
                 });
                 video.srcObject = stream;
-                video.play();
                 
-                // 🧠 ទាញយកខួរក្បាល AI YOLOv8 ខ្នាតធ្ងន់មកដំណើរការលើ Browser ទូរសព្ទផ្ទាល់
-                aiStatus.innerText = "⚡ AI STATUS: LOADING MULTI-THREAD YOLOv8 MODEL (PLEASE WAIT)...";
-                
-                // ហៅយកម៉ូដែល YOLOv8 មកដំណើរការតាមរយៈ ONNX Runtime Web
-                session = await ort.InferenceSession.create('https://r2.dev');
-                
-                aiStatus.innerText = "🟢 AI STATUS: CRITICAL SYSTEM ONLINE • MILITARY TRACKING ACTIVE";
-                
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    processAndDetect();
-                });
+                // បញ្ជាឱ្យវីដេអូរត់ដាច់ខាត ទោះបីជាលើប្រព័ន្ធទូរសព្ទណាក៏ដោយ
+                video.play().catch(e => console.log("Playback failed"));
             } catch (err) {
-                aiStatus.innerText = "❌ AI STATUS: ERROR CHARGING HEAVY MODEL";
-                alert("សូមចុចអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ា ដើម្បីដំណើរការប្រព័ន្ធ AI!");
+                alert("សូមចុចអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ា ដើម្បីដំណើរការប្រព័ន្ធមើលយប់!");
             }
         }
 
-        async function processAndDetect() {
-            if (video.paused || video.ended) return;
-
-            // ១. គូររូបភាពកាមេរ៉ាចូលទៅក្នុង Canvas ដើម្បីឱ្យស្រូបពន្លឺកម្រិតធ្ងន់
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // ២. ចាប់ផ្តើមដំណើរការស្កេនជាមួយ AI YOLOv8
-            if (session) {
-                try {
-                    // បំប្លែងទិន្នន័យរូបភាពពី Canvas ទៅជាទម្រង់ Tensor (320x320) ដែល AI ត្រូវការ
-                    const inputTensor = prepareInput(canvas);
-                    const feeds = { images: inputTensor };
-                    
-                    // ឱ្យ AI គណនាស្វែងរកគោលដៅ
-                    const output = await session.run(feeds);
-                    const predictions = postProcess(output.output0.data, canvas.width, canvas.height);
-                    
-                    // ៣. គូសបន្ទាត់ Lock គោលដៅ និងបំភ្លឺបន្ថែមលើតំបន់ដែលរកឃើញមនុស្ស ឬសត្វ
-                    predictions.forEach(pred => {
-                        ctx.strokeStyle = "#00ff00";
-                        ctx.lineWidth = 4;
-                        ctx.shadowBlur = 15;
-                        ctx.shadowColor = "#00ff00";
-                        
-                        // គូសប្រអប់ Target Lock ក្រាស់ៗបែបកងទ័ព
-                        ctx.strokeRect(pred.x, pred.y, pred.w, pred.h);
-                        
-                        // បង្កើតផ្ទាំង Highlight ពន្លឺពណ៌សនៅខាងក្នុងប្រអប់ដើម្បីឱ្យងាយមើលឃើញរូបរាងក្នុងងងឹត
-                        ctx.fillStyle = "rgba(0, 255, 0, 0.15)";
-                        ctx.fillRect(pred.x, pred.y, pred.w, pred.h);
-                        
-                        // គូសស្លាកឈ្មោះវត្ថុ និងមនុស្ស
-                        ctx.shadowBlur = 0;
-                        ctx.fillStyle = "#00ff00";
-                        ctx.font = "bold 14px 'Courier New'";
-                        ctx.fillText(
-                            `[TRG-LOCK]: ${yoloClasses[pred.class_id].toUpperCase()} (${Math.round(pred.prob * 100)}%)`,
-                            pred.x,
-                            pred.y > 15 ? pred.y - 8 : 15
-                        );
-                    });
-                } catch (e) {
-                    console.error("AI Math Engine Overload:", e);
-                }
-            }
-
-            requestAnimationFrame(processAndDetect);
-        }
-
-        // មុខងារគណនាបច្ចេកទេស៖ បំប្លែងរូបភាពទៅជា Math Matrix សម្រាប់ AI
-        function prepareInput(canvas) {
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = 320;
-            tempCanvas.height = 320;
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCtx.drawImage(canvas, 0, 0, 320, 320);
-            
-            const imgData = tempCtx.getImageData(0, 0, 320, 320);
-            const { data } = imgData;
-            const float32Array = new Float32Array(1 * 3 * 320 * 320);
-            
-            let rOffset = 0;
-            let gOffset = 320 * 320;
-            let bOffset = 2 * 320 * 320;
-            
-            for (let i = 0; i < data.length; i += 4) {
-                float32Array[rOffset++] = data[i] / 255.0;
-                float32Array[gOffset++] = data[i+1] / 255.0;
-                float32Array[bOffset++] = data[i+2] / 255.0;
-            }
-            return new ort.Tensor('float32', float32Array, [1, 3, 320, 320]);
-        }
-
-        // មុខងារចម្រុះព័ត៌មានលទ្ធផល (YOLOv8 Post-Processing & Non-Maximum Suppression)
-        function postProcess(output, imgWidth, imgHeight) {
-            let predictions = [];
-            const numClasses = 80;
-            const numCandidates = 2100; 
-            
-            for (let i = 0; i < numCandidates; i++) {
-                let maxProb = 0;
-                let classId = -1;
-                
-                for (let j = 0; j < numClasses; j++) {
-                    let prob = output[(4 + j) * numCandidates + i];
-                    if (prob > maxProb) {
-                        maxProb = prob;
-                        classId = j;
-                    }
-                }
-                
-                if (maxProb > 0.45) { // កម្រិតភាពជឿជាក់ខ្ពស់ (Threshold 45%)
-                    let cx = output[0 * numCandidates + i] * (imgWidth / 320);
-                    let cy = output[1 * numCandidates + i] * (imgHeight / 320);
-                    let w = output[2 * numCandidates + i] * (imgWidth / 320);
-                    let h = output[3 * numCandidates + i] * (imgHeight / 320);
-                    let x = cx - w / 2;
-                    let y = cy - h / 2;
-                    
-                    predictions.push({ x, y, w, h, prob: maxProb, class_id: classId });
-                }
-            }
-            // ចម្រោះយកតែប្រអប់ដែលត្រឹមត្រូវបំផុត មិនឱ្យជាន់គ្នា (Simple NMS)
-            predictions.sort((a, b) => b.prob - a.prob);
-            return predictions.slice(0, 5); // យកតែគោលដៅធំៗចំនួន ៥ ប៉ុណ្ណោះក្នុងមួយប្លង់
-        }
-
+        // ដំណើរការភ្លាមៗពេលបើកទំព័រវេបសាយ
         window.addEventListener('DOMContentLoaded', startCamera);
     </script>
+</body>
+</html>
