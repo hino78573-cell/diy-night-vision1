@@ -4,47 +4,50 @@ from flask import Flask, Response, render_template
 
 app = Flask(__name__)
 
-# បើកកាមេរ៉ា (Webcam ឬ កាមេរ៉ាទូរសព្ទដែលតភ្ជាប់តាម IP/USB)
+# បើកកាមេរ៉ា
 camera = cv2.VideoCapture(0)
 
-def advanced_ai_night_vision(frame):
-    # ១. បម្លែងរូបភាពទៅជា LAB Color Space ដើម្បីញែកកម្រិតពន្លឺ (Luminance - L) ចេញពីពណ៌
+def military_grade_night_vision(frame):
+    # ១. បម្លែងរូបភាពទៅជា LAB Color Space
     lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     
-    # ២. ប្រើប្រាស់ AI-based CLAHE កម្រិតខ្ពស់ (កាត់បន្ថយភាពរំខាន និងទាញពន្លឺអតិបរមាពីភាពងងឹត)
-    clahe = cv2.createCLAHE(clipLimit=6.0, tileGridSize=(4, 4))
+    # ២. ប្រើប្រាស់ CLAHE កម្រិតអតិបរមាសម្រាប់ទាញពន្លឺពីទីងងឹតខ្លាំង
+    clahe = cv2.createCLAHE(clipLimit=8.0, tileGridSize=(4, 4))
     cl = clahe.apply(l)
     
-    # ៣. ប្រើប្រាស់ Bilateral Filter ដើម្បីបំបាត់គ្រាប់អុចរំខាន (Noise Reduction) តែនៅតែរក្សាគែមវត្ថុឱ្យច្បាស់
-    # នេះជាមុខងារសំខាន់ដែលធ្វើឱ្យរូបភាពមើលទៅរលោង និងមិនព្រិលពេលស្ថិតក្នុងទីងងឹតខ្លាំង
-    denoised_l = cv2.bilateralFilter(cl, d=9, sigmaColor=75, sigmaSpace=75)
+    # ៣. Bilateral Filter កម្រិតខ្ពស់ ដើម្បីបំបាត់គ្រាប់អុចរំខានពេលទាញពន្លឺខ្លាំង
+    denoised_l = cv2.bilateralFilter(cl, d=11, sigmaColor=85, sigmaSpace=85)
     
-    # ៤. Adaptive Gamma Correction (កែតម្រូវអាំងតង់ស៊ីតេពន្លឺស្វ័យប្រវត្តិស្របតាមបរិយាកាសងងឹត)
-    gamma = 1.6
+    # ៤. Advanced Gamma & Digital Gain (សمیនិម្មិតសេនសឺរយោធាជំនាន់ទី៣)
+    gamma = 1.8
     inv_gamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** inv_gamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
     bright_l = cv2.LUT(denoised_l, table)
     
-    # រួមបញ្ចូលកាណាលពន្លឺ និងពណ៌ដើមវិញ
+    # រួមបញ្ចូលកាណាលវិញ
     limg = cv2.merge((bright_l, a, b))
     enhanced_frame = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
     
-    # ៥. បម្លែងទៅជា Grayscale ដើម្បីទម្លាក់ពណ៌ផ្សេង និងទាញយកតែពណ៌បៃតងយោធា (Phosphor Green)
+    # ៥. បម្លែងទៅជា Grayscale និងប្រើ Laplacian Edge Sharpening ឱ្យវត្ថុមុខស្រួចច្បាស់
     gray = cv2.cvtColor(enhanced_frame, cv2.COLOR_BGR2GRAY)
     
-    # បន្ថែម Contrast ឱ្យកាន់តែមុតស្រួច
-    processed = cv2.convertScaleAbs(gray, alpha=2.2, beta=20)
+    # ដាក់គែមឱ្យច្បាស់ (Sharpening filter)
+    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+    sharpened = cv2.filter2D(gray, -1, kernel)
     
-    # ៦. បង្កើតបែបផែនពណ៌បៃតងយោធា (PVS-7 Style Night Vision)
+    # បន្ថែម Contrast ខ្លាំង
+    processed = cv2.convertScaleAbs(sharpened, alpha=2.5, beta=15)
+    
+    # ៦. បង្កើតបែបផែនពណ៌បៃតងយោធា (Military Phosphor Green PVS-14)
     night_vision = cv2.merge((
         np.zeros_like(processed),  # Blue
-        processed,                 # Green (ពន្លឺបៃតងកម្រិតខ្ពស់)
+        processed,                 # Green
         np.zeros_like(processed)   # Red
     ))
     
-    # ៧. បន្ថែមបែបផែន Digital Phosphor Grain (គ្រាប់អុចស្រាលៗលក្ខណៈអាជីព)
-    noise = np.random.normal(0, 8, processed.shape).astype(np.uint8)
+    # ៧. បន្ថែមបែបផែន Digital Noise និង Phosphor Grain ស្រាលៗ
+    noise = np.random.normal(0, 6, processed.shape).astype(np.uint8)
     night_vision = cv2.add(night_vision, cv2.merge((noise, noise, noise)))
     
     return night_vision
@@ -55,8 +58,7 @@ def generate_frames():
         if not success:
             break
         else:
-            # ដំណើរការតាមរយៈកូដ AI កម្រិតខ្ពស់
-            processed_frame = advanced_ai_night_vision(frame)
+            processed_frame = military_grade_night_vision(frame)
             
             # បម្លែងជា JPEG Stream
             ret, buffer = cv2.imencode('.jpg', processed_frame)
