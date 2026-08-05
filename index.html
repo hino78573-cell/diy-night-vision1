@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Military Matrix Night Vision</title>
-    <!-- 🤖 ហៅប្រព័ន្ធខួរក្បាល AI របស់ Google មកដំឡើងលើវេបសាយផ្ទាល់ -->
-    <script src="https://jsdelivr.net"></script>
-    <script src="https://jsdelivr.net"></script>
+    <title>Military Native AI Goggles v8.0</title>
     <style>
+        /* 🎨 ប្រព័ន្ធរចនាផ្ទាំងអេក្រង់វ៉ែនតាយោធា (Combat HUD Styling) */
         body {
             margin: 0;
             background-color: #000;
@@ -19,18 +17,19 @@
             font-family: 'Courier New', Courier, monospace;
             color: #00ff00;
             overflow: hidden;
+            user-select: none;
         }
         h1 { 
             font-size: 13px; 
             margin-bottom: 10px; 
             text-shadow: 0 0 10px #00ff00; 
             text-align: center;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
         #webcam { display: none; }
         .video-box {
             border: 2px solid #00ff00;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
             border-radius: 12px;
             overflow: hidden;
             width: 95%;
@@ -38,116 +37,57 @@
             position: relative;
             background-color: #000000;
         }
+        /* បន្ថែមខ្សែវាស់មុំបែបវ៉ែនតាកងទ័ព (Crosshair Overlay) */
+        .video-box::before {
+            content: "+";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(0, 255, 0, 0.6);
+            font-size: 28px;
+            z-index: 10;
+            pointer-events: none;
+            text-shadow: 0 0 5px #00ff00;
+        }
         canvas {
             width: 100%;
             height: auto;
             display: block;
-            /* 🔄 ប្រើប្រាស់ Matrix Filter ជម្រុញពន្លឺ ៦ដង និងបំប្លែងជាពណ៌បៃតងយោធា */
-            filter: url(#military-green-matrix) brightness(6.0) contrast(4.0);
-            -webkit-filter: url(#military-green-matrix) brightness(6.0) contrast(4.0);
         }
-        .status-bar {
+        .status-container {
+            width: 95%;
+            max-width: 640px;
             margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
             font-size: 11px;
-            color: #00ff00;
             font-weight: bold;
             letter-spacing: 1px;
+        }
+        .blink-text {
+            animation: textBlink 1.5s infinite;
+        }
+        @keyframes textBlink {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
         }
     </style>
 </head>
 <body>
 
-    <h1>⚡ AI MILITARY NIGHT VISION • CORE: GOOGLE COCO-SSD</h1>
+    <h1>⚡ MILITARY NIGHT VISION • CORE: NATIVE PYTHON AI</h1>
     
     <div class="video-box">
-        <video id="webcam" autoplay playsinline muted></style>
-        <!-- អេក្រង់សម្រាប់ឱ្យ AI គូសប្រអប់ Target Lock -->
+        <video id="webcam" autoplay playsinline muted></video>
+        <!-- អេក្រង់ចម្បងបង្ហាញវីដេអូបៃតងម៉ត់ និងប្រអប់ Target Lock ពី Python -->
         <canvas id="nightCanvas"></canvas>
     </div>
 
-    <div class="status-bar" id="aiStatus">🤖 AI SYSTEM: LOADING INTERFACE...</div>
+    <div class="status-container">
+        <span class="blink-text">🔴 SYSTEM: ACTIVE_STREAM</span>
+        <span>SYS_GAIN: 800%</span>
+        <span>CORE: NATIVE_AI</span>
+    </div>
 
-    <!-- 🟢 បន្ទះកូដ Matrix ពណ៌បៃតងយោធាការពារគ្រាប់បែក Noise -->
-    <svg xmlns="http://w3.org" style="display: none;">
-        <filter id="military-green-matrix">
-            <feColorMatrix type="matrix" values="
-                0.1  0.1  0.1  0  0
-                0.5  1.0  0.5  0  0
-                0.1  0.1  0.1  0  0
-                0    0    0    1  0"/>
-        </filter>
-    </svg>
-
-    <script>
-        const video = document.getElementById('webcam');
-        const canvas = document.getElementById('nightCanvas');
-        const ctx = canvas.getContext('2d');
-        const aiStatus = document.getElementById('aiStatus');
-        let model = null;
-
-        // ១. សុំសិទ្ធិបើកកាមេរ៉ា
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "environment" }, 
-                    audio: false 
-                });
-                video.srcObject = stream;
-                video.play();
-                
-                // ២. ចាប់ផ្តើមដំឡើង AI Google (ជំនាន់ដោះស្រាយ Error)
-                aiStatus.innerText = "🤖 AI SYSTEM: INITIALIZING COCO-MODEL...";
-                model = await cocoSsd.load();
-                aiStatus.innerText = "🟢 AI SYSTEM: ONLINE • MILITARY TARGET DETECTION ACTIVE";
-                
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    detectFrame();
-                });
-            } catch (err) {
-                aiStatus.innerText = "❌ AI SYSTEM: PERMISSION DENIED";
-                alert("សូមអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ា ដើម្បីដំណើរការប្រព័ន្ធ AI!");
-            }
-        }
-
-        // 🔄 មុខងាររួមគ្នា៖ គុណពន្លឺកាមេរ៉ាផង និងឱ្យ AI ស្កេនគូសប្រអប់ Lock គោលដៅផង
-        async function detectFrame() {
-            if (video.paused || video.ended) return;
-
-            // គូររូបភាពកាមេរ៉ាចូល Canvas
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // 🧠 បញ្ជាឱ្យ AI ស្កេនមើលវត្ថុ និងមនុស្សក្នុងប្លង់កាមេរ៉ា
-            if (model) {
-                try {
-                    const predictions = await model.detect(canvas);
-                    
-                    // គូសប្រអប់ពណ៌បៃតងព័ទ្ធជុំវិញគោលដៅដែល AI រកឃើញ
-                    predictions.forEach(prediction => {
-                        ctx.strokeStyle = "#00ff00";
-                        ctx.lineWidth = 3;
-                        // គូសប្រអប់ចតុកោណ lock គោលដៅ
-                        ctx.strokeRect(...prediction.bbox);
-                        
-                        // សរសេរឈ្មោះវត្ថុដែល AI ស្គាល់
-                        ctx.fillStyle = "#00ff00";
-                        ctx.font = "bold 14px 'Courier New'";
-                        ctx.fillText(
-                            `[TRG-LOCK]: ${prediction.class.toUpperCase()} [${Math.round(prediction.score * 100)}%]`,
-                            prediction.bbox[0],
-                            prediction.bbox[1] > 15 ? prediction.bbox[1] - 5 : 15
-                        );
-                    });
-                } catch (e) {
-                    console.log("AI scanning skipped for stability");
-                }
-            }
-
-            requestAnimationFrame(detectFrame);
-        }
-
-        window.addEventListener('DOMContentLoaded', startCamera);
-    </script>
-</body>
-</html>
+    <!-- 📝 [ចំណាំ]៖ កូដផ្នែកស្គ្រីប JavaScript (Part 2) សម្រាប់បើកកាមេរ៉ា និងផ្ញើទៅ Python នឹងត្រូវដាក់បន្តនៅខាងក្រោមជួរនេះ -->
