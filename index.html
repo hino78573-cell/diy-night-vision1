@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Military Grade Green Night Vision</title>
+    <title>AI Military Matrix Night Vision</title>
+    <!-- 🤖 ហៅប្រព័ន្ធខួរក្បាល AI របស់ Google មកដំឡើងលើវេបសាយផ្ទាល់ -->
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net"></script>
     <style>
         body {
             margin: 0;
@@ -19,32 +22,30 @@
         }
         h1 { 
             font-size: 13px; 
-            margin-bottom: 15px; 
+            margin-bottom: 10px; 
             text-shadow: 0 0 10px #00ff00; 
             text-align: center;
             letter-spacing: 1px;
         }
+        #webcam { display: none; }
         .video-box {
             border: 2px solid #00ff00;
-            box-shadow: 0 0 35px rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
             border-radius: 12px;
             overflow: hidden;
             width: 95%;
             max-width: 640px;
+            position: relative;
             background-color: #000000;
         }
-        
-        /* 🔄 ប្រព័ន្ធ Matrix Green Core: ជម្រុញពន្លឺ ៦ដង និងដំឡើង Contrast ខ្ពស់បង្អស់ */
-        video {
+        canvas {
             width: 100%;
             height: auto;
             display: block;
-            
-            /* ប្រើប្រាស់ SVG Filter បូករួមជាមួយ CSS Effects ដើម្បីទម្លាយភាពងងឹត */
+            /* 🔄 ប្រើប្រាស់ Matrix Filter ជម្រុញពន្លឺ ៦ដង និងបំប្លែងជាពណ៌បៃតងយោធា */
             filter: url(#military-green-matrix) brightness(6.0) contrast(4.0);
             -webkit-filter: url(#military-green-matrix) brightness(6.0) contrast(4.0);
         }
-        
         .status-bar {
             margin-top: 12px;
             font-size: 11px;
@@ -56,16 +57,17 @@
 </head>
 <body>
 
-    <h1>⚡ MILITARY NIGHT VISION • CORE: MATRIX GREEN MAX</h1>
+    <h1>⚡ AI MILITARY NIGHT VISION • CORE: GOOGLE COCO-SSD</h1>
     
     <div class="video-box">
-        <!-- រត់វីដេអូចំៗផ្ទាល់ពី Hardware ធានាមិនលោត Error គាំងទៀតឡើយ -->
-        <video id="webcam" autoplay playsinline muted></video>
+        <video id="webcam" autoplay playsinline muted></style>
+        <!-- អេក្រង់សម្រាប់ឱ្យ AI គូសប្រអប់ Target Lock -->
+        <canvas id="nightCanvas"></canvas>
     </div>
 
-    <div class="status-bar">📡 SYSTEM: ONLINE • GAIN: 600% • FILTER: PURE GREEN</div>
+    <div class="status-bar" id="aiStatus">🤖 AI SYSTEM: LOADING INTERFACE...</div>
 
-    <!-- 🟢 បន្ទះកូដពណ៌បៃតងយោធាពិសេស សម្រាប់ស្រូបយកភាគល្អិតពន្លឺតូចៗមកពង្រីកឱ្យច្បាស់ -->
+    <!-- 🟢 បន្ទះកូដ Matrix ពណ៌បៃតងយោធាការពារគ្រាប់បែក Noise -->
     <svg xmlns="http://w3.org" style="display: none;">
         <filter id="military-green-matrix">
             <feColorMatrix type="matrix" values="
@@ -78,28 +80,73 @@
 
     <script>
         const video = document.getElementById('webcam');
+        const canvas = document.getElementById('nightCanvas');
+        const ctx = canvas.getContext('2d');
+        const aiStatus = document.getElementById('aiStatus');
+        let model = null;
 
-        // កូដសុំសិទ្ធិបើកកាមេរ៉ាក្រោយរបស់ទូរសព្ទ
+        // ១. សុំសិទ្ធិបើកកាមេរ៉ា
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: "environment",
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    }, 
+                    video: { facingMode: "environment" }, 
                     audio: false 
                 });
                 video.srcObject = stream;
+                video.play();
                 
-                // បញ្ជាឱ្យវីដេអូរត់ដាច់ខាត ទោះបីជាលើប្រព័ន្ធទូរសព្ទណាក៏ដោយ
-                video.play().catch(e => console.log("Playback failed"));
+                // ២. ចាប់ផ្តើមដំឡើង AI Google (ជំនាន់ដោះស្រាយ Error)
+                aiStatus.innerText = "🤖 AI SYSTEM: INITIALIZING COCO-MODEL...";
+                model = await cocoSsd.load();
+                aiStatus.innerText = "🟢 AI SYSTEM: ONLINE • MILITARY TARGET DETECTION ACTIVE";
+                
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    detectFrame();
+                });
             } catch (err) {
-                alert("សូមចុចអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ា ដើម្បីដំណើរការប្រព័ន្ធមើលយប់!");
+                aiStatus.innerText = "❌ AI SYSTEM: PERMISSION DENIED";
+                alert("សូមអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ា ដើម្បីដំណើរការប្រព័ន្ធ AI!");
             }
         }
 
-        // ដំណើរការភ្លាមៗពេលបើកទំព័រវេបសាយ
+        // 🔄 មុខងាររួមគ្នា៖ គុណពន្លឺកាមេរ៉ាផង និងឱ្យ AI ស្កេនគូសប្រអប់ Lock គោលដៅផង
+        async function detectFrame() {
+            if (video.paused || video.ended) return;
+
+            // គូររូបភាពកាមេរ៉ាចូល Canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 🧠 បញ្ជាឱ្យ AI ស្កេនមើលវត្ថុ និងមនុស្សក្នុងប្លង់កាមេរ៉ា
+            if (model) {
+                try {
+                    const predictions = await model.detect(canvas);
+                    
+                    // គូសប្រអប់ពណ៌បៃតងព័ទ្ធជុំវិញគោលដៅដែល AI រកឃើញ
+                    predictions.forEach(prediction => {
+                        ctx.strokeStyle = "#00ff00";
+                        ctx.lineWidth = 3;
+                        // គូសប្រអប់ចតុកោណ lock គោលដៅ
+                        ctx.strokeRect(...prediction.bbox);
+                        
+                        // សរសេរឈ្មោះវត្ថុដែល AI ស្គាល់
+                        ctx.fillStyle = "#00ff00";
+                        ctx.font = "bold 14px 'Courier New'";
+                        ctx.fillText(
+                            `[TRG-LOCK]: ${prediction.class.toUpperCase()} [${Math.round(prediction.score * 100)}%]`,
+                            prediction.bbox[0],
+                            prediction.bbox[1] > 15 ? prediction.bbox[1] - 5 : 15
+                        );
+                    });
+                } catch (e) {
+                    console.log("AI scanning skipped for stability");
+                }
+            }
+
+            requestAnimationFrame(detectFrame);
+        }
+
         window.addEventListener('DOMContentLoaded', startCamera);
     </script>
 </body>
