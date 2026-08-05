@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Advanced Night Vision Cam</title>
+    <title>Clear Black & White Night Vision Cam</title>
     <style>
         body {
             margin: 0;
@@ -13,38 +13,25 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            font-family: 'Courier New', Courier, monospace;
-            color: #00ff00;
+            font-family: sans-serif;
+            color: #ffffff;
             overflow: hidden;
         }
         h1 { 
-            font-size: 14px; 
-            margin-bottom: 10px; 
-            text-shadow: 0 0 8px #00ff00; 
+            font-size: 15px; 
+            margin-bottom: 15px; 
+            text-shadow: 0 0 8px #ffffff; 
             text-align: center;
-            letter-spacing: 1px;
         }
         #webcam { display: none; }
         .video-box {
-            border: 3px solid #00ff00;
-            box-shadow: 0 0 30px #00ff00;
-            border-radius: 12px;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
             overflow: hidden;
             width: 95%;
             max-width: 640px;
             background-color: #050505;
-            position: relative;
-        }
-        /* បន្ថែមខ្សែស្កេនបែបវ៉ែនតាកងទ័ព */
-        .video-box::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0), rgba(0, 255, 0, 0.03), rgba(0, 0, 255, 0));
-            z-index: 2;
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
         }
         canvas {
             width: 100%;
@@ -54,19 +41,19 @@
         .status-bar {
             margin-top: 10px;
             font-size: 12px;
-            color: #00ff00;
+            color: #aaaaaa;
             animation: blink 1.5s infinite;
         }
         @keyframes blink {
-            0% { opacity: 0.3; }
+            0% { opacity: 0.4; }
             50% { opacity: 1; }
-            100% { opacity: 0.3; }
+            100% { opacity: 0.4; }
         }
     </style>
 </head>
 <body>
 
-    <h1>⚡ SUPER DIGITAL NIGHT VISION • MODE: MAX BOOST</h1>
+    <h1>👁️ DIGITAL IR NIGHT VISION • MODE: BLACK & WHITE</h1>
     
     <video id="webcam" autoplay playsinline></video>
     
@@ -74,14 +61,13 @@
         <canvas id="nightCanvas"></canvas>
     </div>
 
-    <div class="status-bar">📡 SYSTEM: LIVE PREVIEW SYSTEM READY...</div>
+    <div class="status-bar">📡 SYSTEM: ACTIVE (NO FILTER)</div>
 
     <script>
         const video = document.getElementById('webcam');
         const canvas = document.getElementById('nightCanvas');
         const ctx = canvas.getContext('2d');
 
-        // ១. សុំសិទ្ធិបើកកាមេរ៉ាក្រោយរបស់ទូរសព្ទក្នុងកម្រិតច្បាស់
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -94,7 +80,7 @@
                 });
                 video.srcObject = stream;
             } catch (err) {
-                alert("សូមអនុញ្ញាត (Allow) ឱ្យវេបសាយបើកកាមេរ៉ាទូរសព្ទរបស់អ្នក ដើម្បីដំណើរការប្រព័ន្ធមើលយប់!");
+                alert("សូមអនុញ្ញាត (Allow) ឱ្យបើកកាមេរ៉ាទូរសព្ទ ដើម្បីដំណើរការប្រព័ន្ធមើលយប់!");
             }
         }
 
@@ -104,47 +90,40 @@
             processFrame();
         });
 
-        // ២. មុខងារគណនាពង្រីកពន្លឺពេលយប់កម្រិតកំពូល (Max Digital Gain)
         function processFrame() {
             if (video.paused || video.ended) return;
 
-            // គូររូបភាពដើមចូលទៅក្នុង Canvas
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // ទាញយកគ្រាប់ពន្លឺ Pixel ទាំងអស់មកកែច្នៃ
             let frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let data = frame.data;
 
-            // កម្រិតដំឡើងពន្លឺ (Gamma និង Gain)
-            const gamma = 0.35; // លេខកាន់តែតូច កន្លែងងងឹតកាន់តែឡើងភ្លឺខ្លាំង
-            const brightnessBoost = 45; // បន្ថែមពន្លឺផ្ទាល់មាត់
+            // ល្បឿនបង្កើនពន្លឺឌីជីថល (ដំឡើង ISO កម្រិតខ្ពស់)
+            const gamma = 0.35; 
+            const brightnessBoost = 40; 
 
             for (let i = 0; i < data.length; i += 4) {
                 let r = data[i];     
                 let g = data[i + 1]; 
                 let b = data[i + 2]; 
 
-                // បំប្លែងទៅជាកម្រិតពន្លឺសខ្មៅធម្មតាសិន (Grayscale)
+                // ១. បំប្លែងទៅជាកម្រិតពន្លឺសខ្មៅ (True Grayscale)
                 let luminance = 0.299 * r + 0.587 * g + 0.114 * b;
 
-                // 🔄 ដំណើរការកូដគណនាពង្រីកពន្លឺផ្នែកងងឹត (Advanced Gamma Correction)
+                // ២. គណនាជម្រុញពន្លឺកន្លែងងងឹតស្លុបឱ្យឡើងភ្លឺ (Gamma Correction)
                 let normalized = luminance / 255;
-                let boostedLuminance = Math.pow(normalized, gamma) * 255 + brightnessBoost;
+                let boosted = Math.pow(normalized, gamma) * 255 + brightnessBoost;
                 
-                // កំណត់មិនឱ្យពន្លឺឡើងហួសកម្រិត ២៥៥ (Max Color State)
-                boostedLuminance = Math.min(255, Math.max(0, boostedLuminance));
+                // ទប់ពន្លឺមិនឱ្យឆេះសខ្លាំងពេក
+                boosted = Math.min(255, Math.max(0, boosted));
 
-                // 🟢 បំប្លែងទៅជា "ពណ៌បៃតងព្រានព្រៃ" កម្រិតច្បាស់ (Military Green Filter)
-                // វិធីនេះជួយលុបគ្រាប់បែក Noise ពណ៌ខៀវ-ក្រហមចោល និងធ្វើឱ្យមើលឃើញរូបរាងវត្ថុច្បាស់ក្នុងងងឹត
-                data[i]     = boostedLuminance * 0.2;  // កាត់ពណ៌ក្រហមចេញឱ្យសល់តិច
-                data[i + 1] = boostedLuminance;        // ជម្រុញពណ៌បៃតងឱ្យឡើងដល់កំពូល
-                data[i + 2] = boostedLuminance * 0.2;  // កាត់ពណ៌ខៀវចេញឱ្យសល់តិច
+                // ៣. បញ្ចូលតម្លៃពណ៌ស្មើគ្នាទាំង ៣ ជួរ ដើម្បីឱ្យចេញជាពណ៌សខ្មៅម៉ត់ស្អាត គ្មានឆ្នូត
+                data[i]     = boosted; // ពណ៌ក្រហម
+                data[i + 1] = boosted; // ពណ៌បៃតង
+                data[i + 2] = boosted; // ពណ៌ខៀវ
             }
 
-            // យកទិន្នន័យដែលកែច្នៃរួចទៅបង្ហាញលើអេក្រង់វិញភ្លាមៗ
             ctx.putImageData(frame, 0, 0);
-            
-            // រត់មុខងារនេះបន្តបន្ទាប់គ្មានឈប់ (Real-time Live Preview)
             requestAnimationFrame(processFrame);
         }
 
